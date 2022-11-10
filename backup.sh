@@ -95,6 +95,12 @@ elif [ "$ACTION" == 'start' ]; then
 		echo "Config post-backup script exists, running it..."
 		"$CONFIG_POST_SCRIPT_PATH" "$SCRIPT_PATH"
 	fi
+	
+	# Enforce forget policy if present
+	if [ -n "$BACKUP_FORGET_POLICIES" ]; then
+		echo "Enforcing \"$BACKUP_FORGET_POLICIES\" forget policies..."
+		$RESTIC_CMD forget $BACKUP_FORGET_POLICIES
+	fi
 
 	echo "Backup complete"
 elif [ "$ACTION" == 'restore' ]; then
