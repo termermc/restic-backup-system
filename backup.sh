@@ -9,13 +9,14 @@ fi
 
 ACTION="$1"
 CONFIG_NAME="$2"
+CONFIG_NAME_SANITIZED="$( echo $CONFIG_NAME | sed 's/\///g' )"
 SCRIPT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-# Remove slashes from config name to avoid possible arbitrary script execution
-CONFIG_BASE_PATH="$SCRIPT_PATH/configs/$( echo $CONFIG_NAME | sed 's/\///g' )"
+CONFIG_BASE_PATH="$SCRIPT_PATH/configs/$CONFIG_NAME_SANITIZED"
 CONFIG_PATH="$CONFIG_BASE_PATH.conf"
 CONFIG_PRE_SCRIPT_PATH="$CONFIG_BASE_PATH.pre"
 CONFIG_POST_SCRIPT_PATH="$CONFIG_BASE_PATH.post"
+CONFIG_PASSWORD_PATH="$SCRIPT_PATH/passwords/$CONFIG_NAME_SANITIZED"
 
 # Check for params
 if [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
@@ -26,12 +27,9 @@ fi
 # Make sure script dir is the working dir
 cd "$SCRIPT_PATH"
 
-# Check if configs dir exists
-if [ ! -d './configs' ]; then
-	echo 'The "configs" directory does not exist.'
-	echo 'There must be a "configs" directory present and config files inside of it to use this tool.'
-	exit 1
-fi
+# Create required dirs
+mkdir -p "$SCRIPT_PATH/configs"
+mkdir -p "$SCRIPT_PATH/passwords"
 
 # Check if config exists
 if [ ! -f "$CONFIG_PATH" ]; then
@@ -49,7 +47,7 @@ if [ "$BACKUP_TYPE" != 's3' ]; then
 	exit 1;
 fi
 
-RESTIC_CMD="restic -r s3:$S3_DOMAIN/$BUCKET_NAME$BUCKET_PREFIX "
+RESTIC_CMD="$( which restic )"
 
 # Perform action
 if [ "$ACTION" == 'init' ]; then
@@ -62,7 +60,7 @@ elif [ "$ACTION" == 'start' ]; then
 	# Run "pre" script if present
 	if [ -f "$CONFIG_PRE_SCRIPT_PATH" ]; then
 		echo "Running pre-backup script..."
-		"$CONFIG_PRE_SCRIPT_PATH"
+		"$CONFIG_PRE_SCRIPT_PATH" "$SCRIPT_PATH"
 	fi
 
 	# Check if backup path exists
@@ -70,14 +68,21 @@ elif [ "$ACTION" == 'start' ]; then
 		echo "Path \"$BACKUP_PATH\" specified in config \"$CONFIG_NAME\" does not exist or is not a directory"
 		exit 1
 	fi
+	
+	# Use password file if present
+	if [ -f "$CONFIG_PASSWORD_PATH" ]; then
+		echo "Using password file located at \"$CONFIG_PASSWORD_PATH\""
+		export RESTIC_PASSWORD_FILE="$CONFIG_PASSWORD_PATH"
+	fi
 
 	# Perform backup
+	echo "Starting backup..."
 	$RESTIC_CMD backup "$BACKUP_PATH"
 
 	# Run post-backup script if present
 	if [ -f "$CONFIG_POST_SCRIPT_PATH" ]; then
 		echo "Config post-backup script exists, running it..."
-		"$CONFIG_POST_SCRIPT_PATH"
+		"$CONFIG_POST_SCRIPT_PATH" "$SCRIPT_PATH"
 	fi
 
 	echo "Backup complete"
