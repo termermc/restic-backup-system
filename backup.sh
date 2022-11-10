@@ -24,8 +24,14 @@ CONFIG_PASSWORD_PATH="$PASSWORDS_DIR/$CONFIG_NAME_SANITIZED"
 cd "$SCRIPT_PATH"
 
 # Create required dirs if they don't already exist
-mkdir -p "$CONFIGS_DIR"
-mkdir -p "$SCRIPTS_DIR"
+function mkdir_with_chmod () {
+	if [ ! -d "$1" ]; then
+		mkdir -p "$1"
+		chmod 700 "$1"
+	fi
+}
+mkdir_with_chmod "$CONFIGS_DIR"
+mkdir_with_chmod "$PASSWORDS_DIR"
 
 # Check dir permissions and warn if they are group or world-readable
 function check_dir_perms () {
@@ -35,7 +41,7 @@ function check_dir_perms () {
 	fi
 }
 check_dir_perms "$CONFIGS_DIR"
-check_dir_perms "$SCRIPTS_DIR"
+check_dir_perms "$PASSWORDS_DIR"
 
 # Check for params
 if [ "$ACTION" = 'help' ] || [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
