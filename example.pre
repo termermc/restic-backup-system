@@ -1,0 +1,3 @@
+# Example pre-backup script
+
+echo "This will be run before the backup, do some setup work"

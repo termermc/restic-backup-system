@@ -1,0 +1,3 @@
+# Example post-backup script
+
+echo "The backup completed (possibly erroneously), do cleanup"
