@@ -12,18 +12,30 @@ CONFIG_NAME="$2"
 CONFIG_NAME_SANITIZED="$( echo $CONFIG_NAME | sed 's/\///g' )"
 SCRIPT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
-CONFIG_BASE_PATH="$SCRIPT_PATH/configs/$CONFIG_NAME_SANITIZED"
+CONFIGS_DIR="$SCRIPT_PATH/configs"
+PASSWORDS_DIR="$SCRIPT_PATH/passwords"
+CONFIG_BASE_PATH="$CONFIGS_DIR/$CONFIG_NAME_SANITIZED"
 CONFIG_PATH="$CONFIG_BASE_PATH.conf"
 CONFIG_PRE_SCRIPT_PATH="$CONFIG_BASE_PATH.pre"
 CONFIG_POST_SCRIPT_PATH="$CONFIG_BASE_PATH.post"
-CONFIG_PASSWORD_PATH="$SCRIPT_PATH/passwords/$CONFIG_NAME_SANITIZED"
+CONFIG_PASSWORD_PATH="$PASSWORDS_DIR/$CONFIG_NAME_SANITIZED"
 
 # Make sure script dir is the working dir
 cd "$SCRIPT_PATH"
 
-# Create required dirs
-mkdir -p "$SCRIPT_PATH/configs"
-mkdir -p "$SCRIPT_PATH/passwords"
+# Create required dirs if they don't already exist
+mkdir -p "$CONFIGS_DIR"
+mkdir -p "$SCRIPTS_DIR"
+
+# Check dir permissions and warn if they are group or world-readable
+function check_dir_perms () {
+	local non_user_perms=$( ls -la "$1" | tail -n 1 | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
+	if [ $non_user_perms != '------' ]; then
+		echo "WARNING: Directory \"$1\" can be read by users other than the owner!"
+	fi
+}
+check_dir_perms "$CONFIGS_DIR"
+check_dir_perms "$SCRIPTS_DIR"
 
 # Check for params
 if [ "$ACTION" = 'help' ] || [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
