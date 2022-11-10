@@ -58,6 +58,12 @@ fi
 # Load config
 source "$CONFIG_PATH"
 
+# Use password file if present
+if [ -f "$CONFIG_PASSWORD_PATH" ]; then
+	echo "Using password file located at \"$CONFIG_PASSWORD_PATH\""
+	export RESTIC_PASSWORD_FILE="$CONFIG_PASSWORD_PATH"
+fi
+
 RESTIC_CMD="$( which restic )"
 
 # Perform action
@@ -78,12 +84,6 @@ elif [ "$ACTION" == 'start' ]; then
 	if [ ! -d "$BACKUP_PATH" ]; then
 		echo "Path \"$BACKUP_PATH\" specified in config \"$CONFIG_NAME\" does not exist or is not a directory"
 		exit 1
-	fi
-	
-	# Use password file if present
-	if [ -f "$CONFIG_PASSWORD_PATH" ]; then
-		echo "Using password file located at \"$CONFIG_PASSWORD_PATH\""
-		export RESTIC_PASSWORD_FILE="$CONFIG_PASSWORD_PATH"
 	fi
 
 	# Perform backup
