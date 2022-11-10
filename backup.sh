@@ -40,13 +40,6 @@ fi
 # Load config
 source "$CONFIG_PATH"
 
-# Check backup type
-if [ "$BACKUP_TYPE" != 's3' ]; then
-	echo "Backup type specified in config is \"$BACKUP_TYPE\", which is not supported."
-	echo "Supported backup types: s3"
-	exit 1;
-fi
-
 RESTIC_CMD="$( which restic )"
 
 # Perform action
