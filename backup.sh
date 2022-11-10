@@ -26,7 +26,7 @@ mkdir -p "$SCRIPT_PATH/configs"
 mkdir -p "$SCRIPT_PATH/passwords"
 
 # Check for params
-if [ "$ACTION" = 'help' ] [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
+if [ "$ACTION" = 'help' ] || [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
 	echo "Usage: $0 <help|init|start|restore> <config name>"
 	exit 1
 fi
