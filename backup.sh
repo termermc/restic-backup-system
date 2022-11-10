@@ -26,8 +26,8 @@ mkdir -p "$SCRIPT_PATH/configs"
 mkdir -p "$SCRIPT_PATH/passwords"
 
 # Check for params
-if [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
-	echo "Usage: $0 <init|start|restore> <config name>"
+if [ "$ACTION" = 'help' ] [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
+	echo "Usage: $0 <help|init|start|restore> <config name>"
 	exit 1
 fi
 
@@ -96,6 +96,6 @@ elif [ "$ACTION" == 'restore' ]; then
 	echo "Restoring backup for config \"$CONFIG_NAME\" to path \"$RESTORE_PATH\"..."
 	$RESTIC_CMD restore latest --target "$RESTORE_PATH"
 else
-	echo "Unknown action \"$ACTION\""
+	echo "Unknown action \"$ACTION\". Use \"help\" to see available actions and usage."
 	exit 1
 fi
