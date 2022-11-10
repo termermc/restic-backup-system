@@ -64,7 +64,7 @@ if [ -f "$CONFIG_PASSWORD_PATH" ]; then
 	export RESTIC_PASSWORD_FILE="$CONFIG_PASSWORD_PATH"
 fi
 
-RESTIC_CMD="$( which restic )"
+RESTIC_CMD="$( which restic ) $BACKUP_ADDITIONAL_ARGS"
 
 # Perform action
 if [ "$ACTION" == 'init' ]; then
