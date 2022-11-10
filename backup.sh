@@ -37,7 +37,7 @@ mkdir_with_chmod "$PASSWORDS_DIR"
 function check_dir_perms () {
 	local non_user_perms=$( ls -la "$1" | sed -n '2p' | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
 	if [ $non_user_perms != '------' ]; then
-		echo "WARNING: Directory \"$1\" can be read by users other than the owner!"
+		echo "WARNING: Directory \"$1\" can be read by users other than the owner! (should be set to 700)"
 	fi
 }
 check_dir_perms "$CONFIGS_DIR"
