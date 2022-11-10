@@ -24,7 +24,7 @@ To see an example pre-backup script, view the contents of `example.pre`.
 To see an example post-backup script, view the contents of `example.post`.
 
 ### Passwords
-Repository passwords for configs can be stored in the 
+Repository passwords for configs can be stored in the `passwords` directory. If a file with the config's name exists in `passwords`, it will be used as the password file.
 
 ### Config Requirements
  - All configs must end with `.conf`
