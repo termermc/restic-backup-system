@@ -35,7 +35,7 @@ mkdir_with_chmod "$PASSWORDS_DIR"
 
 # Check dir permissions and warn if they are group or world-readable
 function check_dir_perms () {
-	local non_user_perms=$( ls -la "$1" | sed '2p' | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
+	local non_user_perms=$( ls -la "$1" | sed -n '2p' | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
 	if [ $non_user_perms != '------' ]; then
 		echo "WARNING: Directory \"$1\" can be read by users other than the owner!"
 	fi
