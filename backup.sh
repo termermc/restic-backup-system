@@ -18,18 +18,18 @@ CONFIG_PRE_SCRIPT_PATH="$CONFIG_BASE_PATH.pre"
 CONFIG_POST_SCRIPT_PATH="$CONFIG_BASE_PATH.post"
 CONFIG_PASSWORD_PATH="$SCRIPT_PATH/passwords/$CONFIG_NAME_SANITIZED"
 
-# Check for params
-if [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
-	echo "Usage: $0 <init|start|restore> <config name>"
-	exit 1
-fi
-
 # Make sure script dir is the working dir
 cd "$SCRIPT_PATH"
 
 # Create required dirs
 mkdir -p "$SCRIPT_PATH/configs"
 mkdir -p "$SCRIPT_PATH/passwords"
+
+# Check for params
+if [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
+	echo "Usage: $0 <init|start|restore> <config name>"
+	exit 1
+fi
 
 # Check if config exists
 if [ ! -f "$CONFIG_PATH" ]; then
