@@ -15,7 +15,7 @@ To see an example config, view the contents of `example.conf`.
 Configs should not contain any scripting other than `export` statements, because they are run for actions other than `start`.
 
 ### Pre/Post-Backup Scripts
-Configs may have optional pre-backup and post-backup scripts.
+Configs may have optional pre-backup and post-backup scripts. They should be marked as executable because they are called as normal scripts, not included with `source`.
 
 They are only run for the `start` action.
 
