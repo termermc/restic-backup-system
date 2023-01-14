@@ -16,7 +16,8 @@ Configs should not contain any scripting other than `export` statements, because
 ### Pre/Post-Backup Scripts
 Configs may have optional pre-backup and post-backup scripts. They should be marked as executable because they are called as normal scripts, not included with `source`.
 
-The directory where `backup.sh` is located is passed as the first argument.
+The config's `tmp` subdirectory path is passed as the first argument.
+Note that the directory will be deleted once the backup has fully completed (including execution of all config scripts).
 
 They are only run for the `start` action.
 
@@ -31,3 +32,8 @@ Repository passwords for configs can be stored in the `passwords` directory. If 
  - A config must have at least `.conf` file, but pre/post-backup scripts are optional
  - All pre-backup scripts must end with `.pre`
  - All post-backup scripts must end with `.post`
+
+## Restoring
+Use the "restore" command as explained by the in-program help.
+
+The only thing to keep in mind is that relative paths passed for the restore path are relative to the directory `backup.sh` is located, not to the current working directory.
