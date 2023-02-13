@@ -88,7 +88,7 @@ elif [ "$ACTION" == 'start' ]; then
 
 	# Perform backup
 	echo "Starting backup..."
-	$RESTIC_CMD backup "$BACKUP_PATH"
+	$RESTIC_CMD backup "$BACKUP_PATH" $BACKUP_TRAILING_ARGS
 
 	# Run post-backup script if present
 	if [ -f "$CONFIG_POST_SCRIPT_PATH" ]; then
