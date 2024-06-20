@@ -27,7 +27,7 @@ cd "$SCRIPT_PATH"
 
 # Writes a message to the log file without echoing it
 function log_write () {
-	echo "$1" >> "$( date ) | $CONFIG_LOG_PATH"
+	echo "$( date ) | $1" >> "$CONFIG_LOG_PATH"
 }
 
 # Echoes a message and writes it to the log file
