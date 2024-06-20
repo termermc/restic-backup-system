@@ -43,9 +43,13 @@ function mkdir_with_chmod () {
 		chmod 700 "$1"
 	fi
 }
+
 mkdir_with_chmod "$CONFIGS_DIR"
 mkdir_with_chmod "$PASSWORDS_DIR"
 mkdir_with_chmod "$LOGS_DIR"
+
+# Create log file if it doesn't exist
+touch "$CONFIG_LOG_PATH"
 
 # Check dir permissions and warn if they are group or world-readable
 function check_dir_perms () {
