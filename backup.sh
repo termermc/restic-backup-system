@@ -64,7 +64,7 @@ check_dir_perms "$LOGS_DIR"
 
 # Check for params
 if [ "$ACTION" = 'help' ] || [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
-	echo "Usage: $0 <help|init|start|restore> <config name>"
+	echo "Usage: $0 <help|init|start|restore|mount> <config name>"
 	exit 1
 fi
 
@@ -138,6 +138,22 @@ elif [ "$ACTION" == 'restore' ]; then
 
 	log_echo "Restoring backup for config \"$CONFIG_NAME\" to path \"$RESTORE_PATH\"..."
 	$RESTIC_CMD restore latest --target "$RESTORE_PATH"
+elif [ "$ACTION" == 'mount' ]; then
+	# Strip trailing slash from path
+	MOUNT_PATH="$( echo $3 | sed 's/\/$//' )"
+
+	# Check if restore path exists
+	if [ ! -n "$MOUNT_PATH" ]; then
+		echo "Usage: $0 mount <config name> <mount path>"
+		exit 1
+	fi
+	if [ ! -d "$MOUNT_PATH" ]; then
+		log_echo "Mount path \"$MOUNT_PATH\" does not exist or is not a directory"
+		exit 1
+	fi
+
+	log_echo "Mounting all snapshots for config \"$CONFIG_NAME\" to path \"$MOUNT_PATH\"..."
+	$RESTIC_CMD mount "$MOUNT_PATH"
 else
 	echo "Unknown action \"$ACTION\". Use \"help\" to see available actions and usage."
 	exit 1
