@@ -64,7 +64,7 @@ check_dir_perms "$LOGS_DIR"
 
 # Check for params
 if [ "$ACTION" = 'help' ] || [ ! -n "$ACTION" ] || [ ! -n "$CONFIG_NAME" ]; then
-	echo "Usage: $0 <help|init|start|restore|mount> <config name>"
+	echo "Usage: $0 <help|init|start|restore|mount|unlock> <config name>"
 	exit 1
 fi
 
@@ -154,6 +154,10 @@ elif [ "$ACTION" == 'mount' ]; then
 
 	log_echo "Mounting all snapshots for config \"$CONFIG_NAME\" to path \"$MOUNT_PATH\"..."
 	$RESTIC_CMD mount "$MOUNT_PATH"
+elif [ "$ACTION" == 'init' ]; then
+	log_echo "Removing stale locks on repository for config \"$CONFIG_NAME\"..."
+	
+	$RESTIC_CMD unlock
 else
 	echo "Unknown action \"$ACTION\". Use \"help\" to see available actions and usage."
 	exit 1
