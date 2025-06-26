@@ -154,7 +154,7 @@ elif [ "$ACTION" == 'mount' ]; then
 
 	log_echo "Mounting all snapshots for config \"$CONFIG_NAME\" to path \"$MOUNT_PATH\"..."
 	$RESTIC_CMD mount "$MOUNT_PATH"
-elif [ "$ACTION" == 'init' ]; then
+elif [ "$ACTION" == 'unlock' ]; then
 	log_echo "Removing stale locks on repository for config \"$CONFIG_NAME\"..."
 	
 	$RESTIC_CMD unlock
