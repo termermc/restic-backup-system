@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Check dependencies
 if [ ! -n "$( which restic )" ]; then
@@ -26,12 +26,12 @@ CONFIG_LOG_PATH="$LOGS_DIR/$CONFIG_NAME_SANITIZED.log"
 cd "$SCRIPT_PATH"
 
 # Writes a message to the log file without echoing it
-function log_write () {
+log_write () {
 	echo "$( date ) | $1" >> "$CONFIG_LOG_PATH"
 }
 
 # Echoes a message and writes it to the log file
-function log_echo () {
+log_echo () {
 	echo "$1"
 	log_write "$1"
 }
@@ -52,11 +52,12 @@ mkdir_with_chmod "$LOGS_DIR"
 touch "$CONFIG_LOG_PATH"
 
 # Check dir permissions and warn if they are group or world-readable
-function check_dir_perms () {
-	local non_user_perms=$( ls -la "$1" | sed -n '2p' | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
-	if [ $non_user_perms != '------' ]; then
+check_dir_perms () {
+	__non_user_perms=$( ls -la "$1" | sed -n '2p' | sed 's![rwxd-]\{4\}\([rwx-]\{6\}\).*!\1!' )
+	if [ $__non_user_perms != '------' ]; then
 		echo "WARNING: Directory \"$1\" can be read by users other than the owner! (should be set to 700)"
 	fi
+	unset __non_user_perms
 }
 check_dir_perms "$CONFIGS_DIR"
 check_dir_perms "$PASSWORDS_DIR"
@@ -75,7 +76,7 @@ if [ ! -f "$CONFIG_PATH" ]; then
 fi
 
 # Load config
-source "$CONFIG_PATH"
+. "$CONFIG_PATH"
 
 # Use password file if present
 if [ -f "$CONFIG_PASSWORD_PATH" ]; then
@@ -86,11 +87,11 @@ fi
 RESTIC_CMD="$( which restic ) $BACKUP_ADDITIONAL_ARGS"
 
 # Perform action
-if [ "$ACTION" == 'init' ]; then
+if [ "$ACTION" = 'init' ]; then
 	log_echo "Initializing backup repository for config \"$CONFIG_NAME\"..."
 	
 	$RESTIC_CMD init
-elif [ "$ACTION" == 'start' ]; then
+elif [ "$ACTION" = 'start' ]; then
 	log_echo "Initiating backup using config \"$CONFIG_NAME\"..."
 
 	# Run "pre" script if present
@@ -122,7 +123,7 @@ elif [ "$ACTION" == 'start' ]; then
 	fi
 
 	log_echo "Backup complete"
-elif [ "$ACTION" == 'restore' ]; then
+elif [ "$ACTION" = 'restore' ]; then
 	# Strip trailing slash from path
 	RESTORE_PATH="$( echo $3 | sed 's/\/$//' )"
 
@@ -138,7 +139,7 @@ elif [ "$ACTION" == 'restore' ]; then
 
 	log_echo "Restoring backup for config \"$CONFIG_NAME\" to path \"$RESTORE_PATH\"..."
 	$RESTIC_CMD restore latest --target "$RESTORE_PATH"
-elif [ "$ACTION" == 'mount' ]; then
+elif [ "$ACTION" = 'mount' ]; then
 	# Strip trailing slash from path
 	MOUNT_PATH="$( echo $3 | sed 's/\/$//' )"
 
@@ -154,7 +155,7 @@ elif [ "$ACTION" == 'mount' ]; then
 
 	log_echo "Mounting all snapshots for config \"$CONFIG_NAME\" to path \"$MOUNT_PATH\"..."
 	$RESTIC_CMD mount "$MOUNT_PATH"
-elif [ "$ACTION" == 'unlock' ]; then
+elif [ "$ACTION" = 'unlock' ]; then
 	log_echo "Removing stale locks on repository for config \"$CONFIG_NAME\"..."
 	
 	$RESTIC_CMD unlock
