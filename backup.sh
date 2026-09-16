@@ -37,7 +37,7 @@ log_echo () {
 }
 
 # Create required dirs if they don't already exist
-function mkdir_with_chmod () {
+mkdir_with_chmod () {
 	if [ ! -d "$1" ]; then
 		mkdir -p "$1"
 		chmod 700 "$1"
